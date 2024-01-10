@@ -66,6 +66,7 @@ export interface JSDocTagsBase {
    */
   pattern?: string;
   strict?: boolean;
+  optional?: boolean;
 }
 
 export type ElementJSDocTags = Pick<
@@ -152,7 +153,7 @@ export function getJSDocTags(nodeType: ts.Node, sourceFile: ts.SourceFile) {
         const tagName = tag.tagName.escapedText.toString();
 
         // Handling "unary operator" tag first (no tag.comment part needed)
-        if (tagName === "strict") {
+        if (tagName === "strict" || tagName === "optional") {
           jsDocTags[tagName] = true;
           return;
         }
@@ -211,6 +212,7 @@ export function getJSDocTags(nodeType: ts.Node, sourceFile: ts.SourceFile) {
             }
             break;
           case "strict":
+          case "optional":
             break;
           default:
             tagName satisfies never;
@@ -301,7 +303,7 @@ export function jsDocTagToZodProperties(
   if (jsDocTags.strict) {
     zodProperties.push({ identifier: "strict" });
   }
-  if (isOptional) {
+  if (isOptional || jsDocTags.optional) {
     zodProperties.push({
       identifier: "optional",
     });
