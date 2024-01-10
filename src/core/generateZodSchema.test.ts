@@ -1114,6 +1114,75 @@ describe("generateZodSchema", () => {
     `);
   });
 
+  it("should add optional() when @optional is used", () => {
+    const source = `/**
+    * @optional
+    */
+    export type Superman = {
+      name: "superman";
+      weakness: Kryptonite;
+      /**
+       * @optional 
+       */
+      age: number;
+      enemies: Array<string>;
+    };`;
+    expect(generate(source)).toMatchInlineSnapshot(`
+       "/**
+           * @optional
+           */
+       export const supermanSchema = z.object({
+           name: z.literal("superman"),
+           weakness: kryptoniteSchema,
+           /**
+            * @optional
+            */
+           age: z.number().optional(),
+           enemies: z.array(z.string())
+       }).optional();"
+     `);
+  });
+
+  it("should add optional() validation when @optional is used on subtype", () => {
+    const source = `export interface A {
+      /** @optional */
+      a: {
+        b: number
+      }
+    }`;
+
+    expect(generate(source)).toMatchInlineSnapshot(`
+      "export const aSchema = z.object({
+          /** @optional */
+          a: z.object({
+              b: z.number()
+          }).optional()
+      });"
+    `);
+  });
+
+  it("should add strict() before optional() validation when @strict is used on a subtype with @optional", () => {
+    const source = `export interface A {
+      /** @strict
+       * @optional
+      */
+      a: {
+        b: number
+      }
+    }`;
+
+    expect(generate(source)).toMatchInlineSnapshot(`
+      "export const aSchema = z.object({
+          /** @strict
+           * @optional
+          */
+          a: z.object({
+              b: z.number()
+          }).strict().optional()
+      });"
+    `);
+  });
+
   it("should add describe() when @description is used (top-level)", () => {
     const source = `/**
     * @description Originally Superman could leap, but not fly.
