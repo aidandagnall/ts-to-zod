@@ -147,11 +147,12 @@ export const heroContactSchema = z.object({
 
 Other JSDoc tags are available:
 
-| JSDoc keyword          | JSDoc Example            | Description                               | Generated Zod                      |
-| ---------------------- | ------------------------ | ----------------------------------------- | ---------------------------------- |
-| `@description {value}` | `@description Full name` | Sets the description of the property      | `z.string().describe("Full name")` |
-| `@default {value}`     | `@default 42`            | Sets a default value for the property     | `z.number().default(42)`           |
-| `@strict`              | `@strict`                | Adds the `strict()` modifier to an object | `z.object().strict()`              |
+| JSDoc keyword          | JSDoc Example            | Description                                 | Generated Zod                      |
+| ---------------------- | ------------------------ | ------------------------------------------- | ---------------------------------- |
+| `@description {value}` | `@description Full name` | Sets the description of the property        | `z.string().describe("Full name")` |
+| `@default {value}`     | `@default 42`            | Sets a default value for the property       | `z.number().default(42)`           |
+| `@strict`              | `@strict`                | Adds the `strict()` modifier to an object   | `z.object().strict()`              |
+| `@optional`            | `@optional`              | Adds the `optional()` modifier to an object | `z.object().optional()`            |
 
 ## JSDoc tags for elements of `string` and `number` arrays
 
@@ -239,7 +240,7 @@ module.exports = [
     name: "example",
     input: "example/heros.ts",
     output: "example/heros.zod.ts",
-    jsDocTagFilter: (tags) => tags.map(tag => tag.name).includes("toExtract") // <= rule here
+    jsDocTagFilter: (tags) => tags.map((tag) => tag.name).includes("toExtract"), // <= rule here
   },
 ];
 
